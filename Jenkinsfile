@@ -23,10 +23,12 @@ pipeline {
 
         stage('Build JAR') {
     steps {
+        sh 'chmod +x ./mvnw' // Add this line to grant execute permissions
         sh './mvnw clean package'
         archiveArtifacts artifacts: 'target/spring_app_sak-0.0.1-SNAPSHOT.jar', fingerprint: true
     }
 }
+
 
 
         stage('Build Docker Image') {
