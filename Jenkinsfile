@@ -22,11 +22,12 @@ pipeline {
         }
 
         stage('Build JAR') {
-            steps {
-                sh 'mvn clean package'
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            }
-        }
+    steps {
+        sh './mvnw clean package'
+        archiveArtifacts artifacts: 'target/spring_app_sak-0.0.1-SNAPSHOT.jar', fingerprint: true
+    }
+}
+
 
         stage('Build Docker Image') {
             steps {
