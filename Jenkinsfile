@@ -1,35 +1,45 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven'
+    }
+
+    environment {
+        DOCKER_IMAGE = 'benjeo/spring-boot-app'
+    }
 
     stages {
+        stage('Pre-Check Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+
         stage('Checkout Code') {
             steps {
-                // Pull source code from GitHub
                 git branch: 'main', url: 'https://github.com/BENJEO2002/Spring_Boot_Project.git'
             }
         }
 
         stage('Build JAR') {
             steps {
-                // Build the Spring Boot JAR file using Maven
                 sh 'mvn clean package'
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                // Build a Docker image
-                sh 'docker build -t benjeo/spring-boot-app .'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                // Push Docker image to DockerHub
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push benjeo/spring-boot-app
+                    docker push $DOCKER_IMAGE
                     """
                 }
             }
@@ -37,10 +47,11 @@ pipeline {
 
         stage('Deploy Application') {
             steps {
-                // Run the Docker container
                 sh """
-                docker pull benjeo/spring-boot-app
-                docker run -d -p 8080:8080 benjeo/spring-boot-app
+                docker stop spring-boot-app || true
+                docker rm spring-boot-app || true
+                docker pull $DOCKER_IMAGE
+                docker run -d --name spring-boot-app -p 8080:8080 $DOCKER_IMAGE
                 """
             }
         }
