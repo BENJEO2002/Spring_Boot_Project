@@ -46,5 +46,6 @@ mysql -u root -p
 ```bash
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1234' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+# new file
 ```
 ---
