@@ -1,13 +1,4 @@
-FROM openjdk:17-jdk-slim
-# Set working directory
-WORKDIR /app
-# Copy the application JAR
-COPY ./target/*.jar app.jar
-# Set environment variables
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/myapplication?createDatabaseIfNotExist=true
-ENV SPRING_DATASOURCE_USERNAME=root
-ENV SPRING_DATASOURCE_PASSWORD=1234
-# Expose port
+FROM openjdk:17-jdk
+COPY app.jar app.jar
 EXPOSE 8081
-# Start the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
