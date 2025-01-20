@@ -46,15 +46,16 @@ pipeline {
         }
 
         stage('Deploy Application') {
-            steps {
-                sh """
-                docker stop spring-boot-app || true
-                docker rm spring-boot-app || true
-                docker pull $DOCKER_IMAGE
-                docker run -d --name spring-boot-app -p 8080:8080 $DOCKER_IMAGE
-                """
-            }
-        }
+    steps {
+        sh """
+        docker stop spring-boot-app || true
+        docker rm spring-boot-app || true
+        docker pull benjeo/spring-boot-app
+        docker run -d --name spring-boot-app -p 8081:8081 benjeo/spring-boot-app
+        """
+    }
+    }
+
     }
 
     post {
